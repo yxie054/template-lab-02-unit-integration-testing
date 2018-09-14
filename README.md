@@ -43,13 +43,112 @@ chomd +x hello.sh
 
 Now, try executing the file again using `./hell.sh` and you should see `hell world` print out to your console. Congratulations, you've created your first bash script. The most important things to remember from this section are the shebang line that starts your bash script (`#!/bin/sh`) and how to make your script executable (`chomd +x <file>`).
 
+> Make a commit here with the hello.sh file
+
 ## Bash Arrays and Loops
 
-Bash can be very useful for testing, because it can easily automate the execution of command line software with different parameters. For example, lets create a new program that print to standard output whatever is passed to it as a command line argument:
+Bash can be very useful for testing, because it can easily automate the execution of command line software with different parameters. For example, lets create a new program named `c-echo.cpp` that prints to standard output whatever is passed to it as a command line argument:
 
 ```
+#include <iostream>
+
+int main(int argv, char** argc) {
+    // Skip the first argc index because its the program
+    for(int i = 1; i < argv; i++) {
+        std::cout << argc[i] << " ";
+    }
+    std::cout << std::endl;
+}
 ```
+
+Compile this program as `c-echo` (`g++ c-echo.cpp -o c-echo`) and test it with some different inputs to verify that it prints whatever is passed to it as an input parameter. Now, lets create a program named `array.sh` which can automatically run this program with some known inputs to automate it's testing.
+
+```
+#!/bin/sh
+
+INPUTS=("first input" "second input" "third input")
+
+./c-echo ${INPUTS[2]}
+./c-echo ${INPUTS{1]}
+./c-echo ${INPUTS[0]}
+```
+
+Lets dig into the top line (after the shebang). Variables are declared the same way in bash as they are in C++ with an equals sign (`=`), and its common to have global variables names written in call capitol latters like in C++. Here we are declaring a bash style array with three values. Note that the array has parentheses (`()`) surrounding all its values, and that the values are seperated by spaces rather than commas. Becuase the values are seperated by spaces and not commas, its common to surround the values in quotes. Without the quotes above the array would have six values instead of three.
+
+When you run this script, you should see that it prints out the inputs (in reverse order) and nothing else. What is happening is that the `INPUT[i]` is being replaced by the i'th indexed array value. The dollar sign and curly bracket syntax (`${INPUTS[i}}`) are used to tell bash that this is a variable and not a string literal. All variables that you use in your bash should be surrounded by the dollar sign and curly brackets (`${VAR}`). So the following lines
+
+```
+./c-echo ${INPUTS[2]}
+./c-echo ${INPUTS{1]}
+./c-echo ${INPUTS[0]}
+```
+
+Are replaced instead with the values from the array, and the following is executed instead
+
+```
+./c-echo third input
+./c-echo second input
+./c-echo first input
+```
+
+Because this will simply execute the code, it is often common to have the system echo out what it is going to run before running it. This makes it easier for the user of the script to understand what is going on and what they should expect to be output. Update your script to the following:
+
+```
+#!/bin/sh
+
+INPUTS=("first input" "second input" "third input")
+
+echo "Executing ./c-echo third input"
+./c-echo ${INPUTS[2]}
+echo "Executing ./c-echo second input"
+./c-echo ${INPUTS{1]}
+echo "Executing ./c-echo first input"
+./c-echo ${INPUTS[0]}
+```
+
+> Make a commit here with the c-echo.cpp and array.sh files
+
+Obviously if we have a large array, or multiple arrays where we want to iterate to run all combinations, then hand coding the combinations is less than desirable. Luckily bash supports various types of loops including iteration loops. Lets try and replace our hard coded execution lines with a loop instead. Update your array.sh file with the following:
+
+```
+#!/bin/sh
+
+INPUTS=("first input" "second input" "third input")
+
+for input in "${INPUTS[@]}"
+do
+    echo "./c-echo ${input}"
+    ./c-echo ${input}
+done
+```
+
+Make sure to take careful note of the quotes around the inputs array (`"${INPUTS[@]}"`), and lets take a closer look at that line. The line is structured as `for x in y` where `x` is the variable that `y` will be unpacked into. In the case of bash for loops it supports in-line lists, so if you put a single value for `y` it will do a single iteration replaced the variable `x` with `y`. Alternatively you could have put multiple values seperated by spaces in place of the `y` and `x` would iterate over all of them. We've already discussed that we need the dollar sign and curly braces (`${}`) to tell bash that this is a variable and not a literal, but lets look at the index of operator with ampersand (`[@]`). This expands the array inputs into its consituent parts, and without it the for loop would only iterate over the first element in the array. 
+
+The last thing we need to consider is why we need the extra quotes around the `inputs` variable, which has to do with the way shell replaces and parses values. When bash sees the variable symbols (`${}`) it replaces that variable with the value, which in the case of the first iteration would be `first input`. The problem we now have is with the for loop, since this type of loop allows for a list of comma seperated values to be put in-line when the variable is replaced with two different values it will try and iterate over them seperatly and each word in the array will be run seperatly. When we add the quotes the loop then sees these two words as a single entry (which is what we want) and will execute it correctly. These little details can make bash a bit difficult to work with at first, but will become more natrual the more you work with it (and Stack Overflow is your friend).
+
+Loop iterations are not only useful for user defined arrays, but are also useful for iterating over data that bash interprets as array. For instnace, you can easily iterate over a directory of files like you would when you need to process multiple files through a program and didn't want to do it one file at a time. Create a new file, `list.sh`, with the following code:
+
+```
+for file in ./*
+do
+    echo $(basename "$file")
+done
+```
+
+Here, the `./*` piece of the for loop returns all the files (using the wildcard character `*`) at the directory path `./` which is the local directory. The `$(basename "$file")` calls the [basename command](http://pubs.opengroup.org/onlinepubs/007908799/xcu/basename.html) within bash, replace the input to the command with the iteration variable. The basename command strips out the path from a file path leaving only the file name.
+
+> Make a commit here with the list.sh file
+
+## Bash If and Else
+
+Loops make it easy for us to iterate over a set of files to bulk process data or to run a number of different inputs through a program, but we'll need conditionals if we want to validate output or run only a subset of files from a directory for process. All conditionals start with comparitors, and in bash there are a number of different comparitors you can use depending on the context but the most common to use (along with their C++ equivalent) are listed below:
+
+* `A -eq B`: A == B
+* `A -ne B`: A != B
+* `A -gt B`: A > B
+* `A -ge B`: A >= B
+* `A -lt B`: A < B
+* `A -le B`: A <= B
 
 ## Bash Parameters
 
-## Bash If and Else
