@@ -126,6 +126,8 @@ Make sure to take careful note of the quotes around the inputs array (`"${INPUTS
 
 The last thing we need to consider is why we need the extra quotes around the `inputs` variable, which has to do with the way shell replaces and parses values. When bash sees the variable symbols (`${}`) it replaces that variable with the value, which in the case of the first iteration would be `first input`. The problem we now have is with the for loop, since this type of loop allows for a list of comma seperated values to be put in-line when the variable is replaced with two different values it will try and iterate over them seperatly and each word in the array will be run seperatly. When we add the quotes the loop then sees these two words as a single entry (which is what we want) and will execute it correctly. These little details can make bash a bit difficult to work with at first, but will become more natrual the more you work with it (and Stack Overflow is your friend).
 
+As for the loop itself, it starts with the `for` keyword, but must be followed with a `do` keyword on the next line (or seperated from the `for` line with a semicolon (`;`), which represents a newline. Everything after the `do` keyword makes up the loop body, and will be executed each iteration, until we reach the `done` keyword, which represents the end of the loop body.
+
 Loop iterations are not only useful for user defined arrays, but are also useful for iterating over data that bash interprets as array. For instnace, you can easily iterate over a directory of files like you would when you need to process multiple files through a program and didn't want to do it one file at a time. Create a new file, `list.sh`, with the following code:
 
 ```
@@ -141,14 +143,26 @@ Here, the `./*` piece of the for loop returns all the files (using the wildcard 
 
 ## Bash If and Else
 
-Loops make it easy for us to iterate over a set of files to bulk process data or to run a number of different inputs through a program, but we'll need conditionals if we want to validate output or run only a subset of files from a directory for process. All conditionals start with comparitors, and in bash there are a number of different comparitors you can use depending on the context but the most common to use (along with their C++ equivalent) are listed below:
+Loops make it easy for us to iterate over a set of files to bulk process data or to run a number of different inputs through a program, but we'll need conditionals if we want to validate output or run only a subset of files from a directory for process. Lets open our `array.sh` file and update it to make sure that the output of our program matches what we expect.
 
-* `A -eq B`: A == B
-* `A -ne B`: A != B
-* `A -gt B`: A > B
-* `A -ge B`: A >= B
-* `A -lt B`: A < B
-* `A -le B`: A <= B
+```
+#!/bin/sh
+
+INPUTS=("first input" "second input" "third input")
+
+for input in "${INPUTS[@]}"
+do
+    output=$(./c-echo ${input})
+    if [ "${output}" = "${input}" ]
+    then
+        echo "Test passed"
+    else
+        echo "Test failed"
+    fi
+done
+```
+
+The first thing we do differently here is we run the command using the bash command syntax that we used when we ran the basename command earlier. This executes the command and saves the result to the variable `output`. Next, we have our if statement which starts with the `if` keyword and then has a condition to evaluate within square brackets (`[]`). The square brakcets are actually a shorthand for a conditional test in bash, and will always return a true or false value (which is very convenient when working with if/else). Next we have the `then` keyword, which like `do` in the loop represents the start of the loop body. We then have what we want the condition to execute if the condition is met, follow by and `else` keyword and what we want the condition to execute if its false. Finally, the entire condition body is ended with the `fi` keyword (`if` backwards) in the same way that `done` ends the loop body.
 
 ## Bash Parameters
 
