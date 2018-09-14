@@ -1,6 +1,6 @@
 # Bash and Unit Testing
 
-> Author(s): Brian Crites ([@brrcrites]()), Rachid Ouit
+> Author(s): Brian Crites ([@brrcrites](https://github.com/brrcrites)), Rachid Ouit
 
 In this lab you will learn the basics of how to use bash (Bourne Again SHell) scripting to automate common tasks and improve your workflow. Bash is a perfect language when you need to automate a small task on the command line and the cost of building the same script in a higher level lanuage is higher than the task itself. While bash is usually used to automate small tasks, there are lots of systems that are built on top of it or use it as part of their running process. These include many of the UNIX commands  you are familiar with as well as many major build and package management systems.
 
@@ -106,7 +106,7 @@ echo "Executing ./c-echo first input"
 ./c-echo ${INPUTS[0]}
 ```
 
-> Make a commit here with the c-echo.cpp and array.sh files
+> Make a commit here with the c-echo.cpp and array.sh files, **as well as a .gitignore file that includes the c-echo executable**
 
 Obviously if we have a large array, or multiple arrays where we want to iterate to run all combinations, then hand coding the combinations is less than desirable. Luckily bash supports various types of loops including iteration loops. Lets try and replace our hard coded execution lines with a loop instead. Update your array.sh file with the following:
 
@@ -226,4 +226,82 @@ There are also additional features that we haven't mentioned here that you may f
 
 ## Unit Testing in C++
 
+The type of testing that we've been doing so far is whats known as "black-box testing", because we don't need to know anything about the internal workings of the system in order to test it. This could also be considered an integration test, because were testing all the modules of the systems integrated together instead of each module individually. This stands in contrast to a unit test, which tests each module (class, function, etc.) individually and doesn't test how these modules interact. The exampel we have done here could be considered both a unit test and an integration test because it is a single module that we are testing, but you can see how if we added more modules into the main then the testing we are doing would be integration, since we would have no way to test those modules individually from the command line.
 
+Testing is a very important part of the software development process that is often overlooked in university curriculum. We know because **Google told us specifically it was something they found lacking in their incoming interns and new grad hires**, so we suggest you take this unit seriously along with the testing you will be doing for your projects (and add it to your resume when you apply for internships).
+
+Because C++ is a compiled language, it is fairly difficult to create unit tests for individual classes and functions because they need a main to perform the test running. Rather than try and invent our own testing paradigms/frameworks, we are going to use the fairly standard [Google Unit Test Framework](https://github.com/google/googletest) (gtest) for C++. While it's tempting to think we are using this because Google told us we needed more testing in the curriculum, it is actually because the author ([@brrcrites](https://github.com/brrcrites)) uses it in his research, and it has become the de-facto standard teseting framework for C++ code.
+
+Since we are going to write unit tests for this program, we first want to break the project up into different modules so its easier to test. Lets modify our c-echo.cpp file, and rename it to c-echo.h. If we rename and then modify c-echo.cpp without telling git that we are going to rename it, then its going to think we removed one file and created an entirely new one. This can make the commits very hard to read (and review very difficult), so we should rename the file using git itself:
+
+```
+$ git mv c-echo.cpp c-echo.h
+```
+
+If you run `git status` you should see that git has logged the file rename. Now, lets turn c-echo.h into a function rather than just a main:
+
+```
+#include <iostream>
+
+std::string echo(int length, char** chars) {
+    std::string ret = "";
+    for(int i = 1; i < length; i++) {
+        ret += chars[i];
+        if(i < length - 1) {
+            ret += " ";
+        }
+    }
+    ret += "\n";
+    return ret;
+}
+```
+
+Notice that now instead of printing directly, we are generating a string which we will print to standard output in the main. Now, lets create a new main.cpp file so we can run the program like we did before:
+
+```
+#include "c-echo.h"
+
+int main(int argv, char** argc) {
+    std::cout << echo(argv, argc);
+}
+```
+
+## CMake
+
+Before we can start actually writing the unit tests, there are a few changes we'll need to make to our repository. The first issue is that in order to use gtest is we'll need to change from hand compiling our program to using a build system. Gtest doesn't support the basic make build system, but instead supports [CMake](https://cmake.org/) which is a build system built on top of make and supports some more advanced features. The CMake system looks for a CMakeLists.txt file in order to know what to build, so start by creating the following CMakeLists.txt file:
+
+```
+ADD_EXECUTABLE(c-echo
+    main.cpp
+)
+```
+
+The function `ADD_EXECUTABLE` tells CMake to create a new exectuable named after the first parameter in that function, in this case `c-echo`. We then list all the `.cpp` files which need to be included in that executable. In this case we only have the main.cpp, which has a `#include` for the c-echo.h file which makes sure that the c-echo.h file gets included during compilation (this has to do with the way that C++ compilers stitch some files together during compilation, and won't be further covered in this lab). I mentioned earlier that CMake is built on top of make, and to be more specific what it does is actually generate really good make files. Run the following command from the terminal in order to generate a new make file to compile your program:
+
+```
+$ cmake .
+```
+
+This command envokes the cmake build system in the local directory (where our CMakeLists.txt file is located). This will then generate a Makefile that matches the executable that we asked for in our CMakeLists.txt. Go ahead and envoke the Makefile and you should see a nicely designed build percentge which will generate a new `c-echo` executable.
+
+```
+$ make
+[ 50%] Building CXX object CMakeFiles/c-echo.dir/main.cpp.o
+[100%] Linking CXX executable c-echo
+[100%] Built target c-echo
+```
+
+Now that we've switched the build system, go ahead and run a few test commands on the new executable and re-run your array.sh file to make sure its still functioning as we expected. Since we made what could be a major breaking change to the program, its a good idea to make sure we test the changes to make sure its still working as expected before we make any new changes. We should also update our .gitignore file to ignore the generated build files:
+
+```
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+c-echo
+```
+
+> Make a commit here with CMakeLists.txt, c-echo.h, main.cpp, and the updated .gitignore.
+
+## Git Submodules
