@@ -222,5 +222,8 @@ Now, re-compile the program (remember to use `g++ c-echo.cpp -o c-echo` so it ge
 
 There are lots of different ways you can generate useful conditions within bash, especially when also using other bash commands. We are only covering the most basic version here, but we encourage you to explore more conditions on your own as the need arises.
 
-## Bash Parameters
+There are also additional features that we haven't mentioned here that you may find useful when writing bash scripts such as [command line arguments](http://linuxcommand.org/lc3_wss0120.php), [user input](https://ryanstutorials.net/bash-scripting-tutorial/bash-input.php), and [functions](https://ryanstutorials.net/bash-scripting-tutorial/bash-functions.php)
+
+## Unit Testing in C++
+
 
