@@ -152,6 +152,7 @@ INPUTS=("first input" "second input" "third input")
 
 for input in "${INPUTS[@]}"
 do
+    echo "./c-echo ${input}"
     output=$(./c-echo ${input})
     if [ "${output}" = "${input}" ]
     then
@@ -163,6 +164,63 @@ done
 ```
 
 The first thing we do differently here is we run the command using the bash command syntax that we used when we ran the basename command earlier. This executes the command and saves the result to the variable `output`. Next, we have our if statement which starts with the `if` keyword and then has a condition to evaluate within square brackets (`[]`). The square brakcets are actually a shorthand for a conditional test in bash, and will always return a true or false value (which is very convenient when working with if/else). Next we have the `then` keyword, which like `do` in the loop represents the start of the loop body. We then have what we want the condition to execute if the condition is met, follow by and `else` keyword and what we want the condition to execute if its false. Finally, the entire condition body is ended with the `fi` keyword (`if` backwards) in the same way that `done` ends the loop body.
+
+Now, lets run this code and take a look at the output. You should see something like the following:
+
+```
+./c-echo first input
+Test failed
+./c-echo second input
+Test failed
+./c-echo third input
+Test failed
+```
+
+Looks like our outputs didn't match out inputs, why could that be? Lets take a closer look at the output we get and what we compare it to and see if we can find the issue. Rewrite the `array.sh` script to print both values **surrounded by string literals**.
+
+```
+#!/bin/sh
+
+INPUTS=("first input" "second input" "third input")
+
+for input in "${INPUTS[@]}"
+do
+    echo "./c-echo ${input}"
+    output=$(./c-echo ${input})
+    echo "Output: \"${output}\""
+    echo "Input: \"${input}\""
+    if [ "${output}" = "${input}" ]
+    then
+        echo "Test passed"
+    else
+        echo "Test failed"
+    fi
+done
+```
+
+Run the updated test code and the issue should be fairly obvious. Out c-echo program prints a space after every word in `argc`, leading to a traiing whitespace that doesn't exist in the input. Lets go ahead and update the c-echo program so that we skip printing the trailing whitespace.
+
+```
+#include <iostream>
+
+int main(int argv, char** argc) {
+    // Skip the first argc index because its the program
+    for(int i = 1; i < argv; i++) {
+        std::cout << argc[i];
+        // Print a whitespace after all but the last iteration
+        if(i < argv - 1) {
+            std::cout << " ";
+        }
+    }
+    std::cout << std::endl;
+}
+```
+
+Now, re-compile the program (remember to use `g++ c-echo.cpp -o c-echo` so it generates the correct executable) and re-run your `assay.sh` test script. It should now say that all the tests have been passed.
+
+> Make a commit here with the assay.sh and c-echo.cpp files
+
+There are lots of different ways you can generate useful conditions within bash, especially when also using other bash commands. We are only covering the most basic version here, but we encourage you to explore more conditions on your own as the need arises.
 
 ## Bash Parameters
 
