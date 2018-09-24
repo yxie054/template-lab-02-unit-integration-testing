@@ -266,6 +266,8 @@ int main(int argv, char** argc) {
 }
 ```
 
+One of the benefits of writing unit tests is that it forces you to think about how to subdivide a problem across a number of different classes and functions, because those become your testable units. 
+
 ## CMake
 
 Before we can start actually writing the unit tests, there are a few changes we'll need to make to our repository. The first issue is that in order to use gtest is we'll need to change from hand compiling our program to using a build system. Gtest doesn't support the basic make build system, but instead supports [CMake](https://cmake.org/) which is a build system built on top of make and supports some more advanced features. The CMake system looks for a CMakeLists.txt file in order to know what to build, so start by creating the following CMakeLists.txt file:
@@ -341,9 +343,9 @@ Now, lets create the test.cpp file and create our first unit test:
 
 #include "gtest/gtest.h"
 
-TEST(EchoTest, EmptyString) {
-    char* test_val[1]; test_val[0] = "./c-echo";
-    EXPECT_EQ("", echo(1,test_val));
+TEST(EchoTest, HelloWorld) {
+    char* test_val[3]; test_val[0] = "./c-echo"; test_val[1] = "hello"; test_val[2] = "world";
+    EXPECT_EQ("hello world", echo(1,test_val));
 }
 
 int main(int argc, char **argv) {
@@ -354,7 +356,7 @@ int main(int argc, char **argv) {
 
 We start by including our c-echo.h so we have access to the `echo` function that we want to test, and we also `#include` the gtest framework. The gtest inclusion doesn't reference the gtest.h file from the directory directly, but instead uses a special gtest/ directory which we have access to through the `TARGET_LINK_LIBRARIES` function in the CMake (notice it matches the gtest from that command). 
 
-After that we create our first unit test. There are lots of different types of tests that you can create using the gtest framework, and I suggest you read this [quick introduction to gtest guide](https://www.ibm.com/developerworks/aix/library/au-googletestingframework.html), and then reference this [gtest primer](https://github.com/google/googletest/blob/master/googletest/docs/primer.md) when you are looking for something more specific, in addition to the google test official documentation. The first test is defined with the `TEST` function, which takes a test set name (`EchoTest`) and a name for this specific test (`EmptyString`). All tests with the same test set name will be grouped together in the output when the tests are run. In this test, we create a `char** test_val` with a single value, which is the executable `./c-echo`. Remember that our function is programmed to skip the executable, so in order to test it properly we still need to pass the executable to the function. Finally, we create a new main which runs all the tests that we have written (this main is given in the documentation and you are unlikely to need to change it). 
+After that we create our first unit test. There are lots of different types of tests that you can create using the gtest framework, and I suggest you read this [quick introduction to gtest guide](https://www.ibm.com/developerworks/aix/library/au-googletestingframework.html), and then reference this [gtest primer](https://github.com/google/googletest/blob/master/googletest/docs/primer.md) when you are looking for something more specific, in addition to the google test official documentation. The first test is defined with the `TEST` function, which takes a test set name (`EchoTest`) and a name for this specific test (`HelloWorld`). All tests with the same test set name will be grouped together in the output when the tests are run. In this test, we create a `char** test_val` with three values, which is the executable `./c-echo` followed by `hello world`. Remember that our function is programmed to skip the executable, so in order to test it properly we still need to pass the executable to the function. Finally, we create a new main which runs all the tests that we have written (this main is given in the documentation and you are unlikely to need to change it). 
 
 Now that we've modified our CMakeLists.txt, we'll need to generate a new Makefile before we can compile the tests. Run the following commands to generate a new Makefile, compile the new targets, and then run the tests:
 
@@ -370,20 +372,20 @@ When you run the tests, you should see an output like the following:
 [==========] Running 1 test from 1 test case.
 [----------] Global test environment set-up.
 [----------] 1 test from EchoTest
-[ RUN      ] EchoTest.EmptyString
+[ RUN      ] EchoTest.HelloWorld
 .../test.cpp:8: Failure
 Expected equality of these values:
-  ""
+  "hello world"
   echo(1,test_val)
-    Which is: "\n"
-[  FAILED  ] EchoTest.EmptyString (0 ms)
+    Which is: "hello world\n"
+[  FAILED  ] EchoTest.HelloWorld (0 ms)
 [----------] 1 test from EchoTest (0 ms total)
 
 [----------] Global test environment tear-down
 [==========] 1 test from 1 test case ran. (0 ms total)
 [  PASSED  ] 0 tests.
 [  FAILED  ] 1 test, listed below:
-[  FAILED  ] EchoTest.EmptyString
+[  FAILED  ] EchoTest.HelloWorld
 
  1 FAILED TEST
 ```
@@ -392,19 +394,19 @@ Oops, we failed our first test. Lets take a look at the output and try and see w
 
 ```
 Expected equality of these values:
-  ""
+  "hello world"
   echo(1,test_val)
-    Which is: "\n"
+    Which is: "hello world\n"
 ```
 
-The problem is that we expected an empty string to be returned, but we forgot that the function actually adds a newline to the end of the string so the prompt will go to the next line. At this point we have two options (1) if we actually want the function to return an empty string, we need to modify the function or (2) if the function should actually return a newline then we need to change the test. In a test driven design methodology, we would actually write one or a small number of basic unit tests, then develope a small part of our system until we pass those unit tests, and then repeat that process until we've finish our function (and then we already have our unit tests). Here, the function echo should probably directly mimic the input so we don't actually want that newline in the function but instead in the main. Go ahead and modify the function in c-echo.h so it no longer returns the newline and instead add that newline to the main.cpp, and re-run the test to make sure you are now passing (since the tests don't run the other main, the added newline there won't be a problem for testing), you should see something like this:
+The problem is that we expected `hello world` to be returned, but we forgot that the function actually adds a newline to the end of the string so the prompt will go to the next line. At this point we have two options (1) if we actually want the function to return `hello world`, we need to modify the function or (2) if the function should actually return a newline then we need to change the test. In a test driven design methodology, we would actually write one or a small number of basic unit tests, then develope a small part of our system until we pass those unit tests, and then repeat that process until we've finish our function (and then we already have our unit tests). Here, the function echo should probably directly mimic the input so we don't actually want that newline in the function but instead in the main. Go ahead and modify the function in c-echo.h so it no longer returns the newline and instead add that newline to the main.cpp, and re-run the test to make sure you are now passing (since the tests don't run the other main, the added newline there won't be a problem for testing), you should see something like this:
 
 ```
 [==========] Running 1 test from 1 test case.
 [----------] Global test environment set-up.
 [----------] 1 test from EchoTest
-[ RUN      ] EchoTest.EmptyString
-[       OK ] EchoTest.EmptyString (0 ms)
+[ RUN      ] EchoTest.HelloWorld
+[       OK ] EchoTest.HelloWorld (0 ms)
 [----------] 1 test from EchoTest (0 ms total)
 
 [----------] Global test environment tear-down
@@ -416,16 +418,16 @@ The problem is that we expected an empty string to be returned, but we forgot th
 
 ## Testing Edge Cases
 
-The first test you've written actually tests an edge case where no input is given, now lets write a test for a more normal case. Add the following code after the first test but before the main in test.cpp.
+The first test you've written represents the type of average case we would expect from the user, which are important to test. You also want to make sure you are testing edge cases, where the functionality of what you are teseting may not be as obvious. For example, our echo function is designed to mimic exactly what is input so a blank input gets a blank response. Another developer may assume that no input is invalid and return some type of error. Lets create a unit test for an empty input, which tests that is equivalent to returning a blank.
 
 ```
-TEST(EchoTest, HelloString) {
-    char* test_val[2]; test_val[0] = "./c-echo"; test_val[1] = "hello";
-    EXPECT_EQ("hello", echo(2,test_val));
+TEST(EchoTest, EmptyString) {
+    char* test_val[1]; test_val[0] = "./c-echo";
+    EXPECT_EQ("", echo(2,test_val));
 }
 ```
 
-This tests a fairly average case, where we have a single word after the name of the executable. Go ahead and re-compile the program and re-run the test file. Note that when you call `make` with multiple targets in your CMakeLists.txt it will generate all the executables unless you specify one with `make test` or `make c-echo`. When writing tests cases, you want to test normal or average cases but you also want to create test cases or edge cases like unexpected input, lack of input, inputs out of expected ranges, etc.
+This new test makes two valueable additions to our system. The first is if another developer modifies the functionality of our echo function to do anything on a blank input except return nothing (throw an error for example) then they will fail the test and have to consciously make the decision about changing to test to match the function, or changing the function to meet the test (as you did earlier). The second thing we gain is the usage of tests as a form of documentation. If I am wondering what the result of zero input to the function is, I can check the tests and assuming there is a test with that edge case I can see what result the tests expects. In this way a comprehensive set of tests is its own form of documentation (although you should consider this a supplement form of documentation, not a replacement for actual documentation).
 
 ## Submission
 
