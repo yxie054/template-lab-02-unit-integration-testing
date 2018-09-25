@@ -345,7 +345,7 @@ Now, lets create the test.cpp file and create our first unit test:
 
 TEST(EchoTest, HelloWorld) {
     char* test_val[3]; test_val[0] = "./c-echo"; test_val[1] = "hello"; test_val[2] = "world";
-    EXPECT_EQ("hello world", echo(1,test_val));
+    EXPECT_EQ("hello world", echo(3,test_val));
 }
 
 int main(int argc, char **argv) {
@@ -376,7 +376,7 @@ When you run the tests, you should see an output like the following:
 .../test.cpp:8: Failure
 Expected equality of these values:
   "hello world"
-  echo(1,test_val)
+  echo(3,test_val)
     Which is: "hello world\n"
 [  FAILED  ] EchoTest.HelloWorld (0 ms)
 [----------] 1 test from EchoTest (0 ms total)
@@ -395,7 +395,7 @@ Oops, we failed our first test. Lets take a look at the output and try and see w
 ```
 Expected equality of these values:
   "hello world"
-  echo(1,test_val)
+  echo(3,test_val)
     Which is: "hello world\n"
 ```
 
@@ -423,7 +423,7 @@ The first test you've written represents the type of average case we would expec
 ```
 TEST(EchoTest, EmptyString) {
     char* test_val[1]; test_val[0] = "./c-echo";
-    EXPECT_EQ("", echo(2,test_val));
+    EXPECT_EQ("", echo(1,test_val));
 }
 ```
 
