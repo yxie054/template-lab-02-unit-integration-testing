@@ -38,10 +38,10 @@ total 16
 The left three characters are the owner mode, the middle three are the group mode, and the last three are for everyone who isn't the owner for in the group. You can read more about the nuances of [chmod here](https://ss64.com/bash/chmod.html), but right now we are going to focus on making the file executable. In order to add the executable (`x`) attribute to a file, we can use the `+x` shorthand in the following way:
 
 ```
-chomd +x hello.sh
+chmod +x hello.sh
 ```
 
-Now, try executing the file again using `./hell.sh` and you should see `hell world` print out to your console. Congratulations, you've created your first bash script. The most important things to remember from this section are the shebang line that starts your bash script (`#!/bin/sh`) and how to make your script executable (`chomd +x <file>`).
+Now, try executing the file again using `./hello.sh` and you should see `hell world` print out to your console. Congratulations, you've created your first bash script. The most important things to remember from this section are the shebang line that starts your bash script (`#!/bin/sh`) and how to make your script executable (`chomd +x <file>`).
 
 > Make a commit here with the hello.sh file
 
