@@ -69,7 +69,7 @@ Compile this program as `c-echo` (`g++ c-echo.cpp -o c-echo`) and test it with s
 INPUTS=("first input" "second input" "third input")
 
 ./c-echo ${INPUTS[2]}
-./c-echo ${INPUTS{1]}
+./c-echo ${INPUTS[1]}
 ./c-echo ${INPUTS[0]}
 ```
 
