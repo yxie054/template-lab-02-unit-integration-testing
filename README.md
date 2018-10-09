@@ -73,9 +73,9 @@ INPUTS=("first input" "second input" "third input")
 ./c-echo ${INPUTS[0]}
 ```
 
-Lets dig into the top line (after the shebang). Variables are declared the same way in bash as they are in C++ with an equals sign (`=`), and its common to have global variables names written in call capitol latters like in C++. Here we are declaring a bash style array with three values. Note that the array has parentheses (`()`) surrounding all its values, and that the values are seperated by spaces rather than commas. Becuase the values are seperated by spaces and not commas, its common to surround the values in quotes. Without the quotes above the array would have six values instead of three.
+Lets dig into the top line (after the shebang). Variables are declared the same way in bash as they are in C++ with an equals sign (`=`), and its common to have global variables names written in all capital letters like in C++. Here we are declaring a bash style array with three values. Note that the array has parentheses (`()`) surrounding all its values, and that the values are seperated by spaces rather than commas. Becuase the values are seperated by spaces and not commas, its common to surround the values in quotes. Without the quotes above the array would have six values instead of three.
 
-When you run this script, you should see that it prints out the inputs (in reverse order) and nothing else. What is happening is that the `INPUT[i]` is being replaced by the i'th indexed array value. The dollar sign and curly bracket syntax (`${INPUTS[i}}`) are used to tell bash that this is a variable and not a string literal. All variables that you use in your bash should be surrounded by the dollar sign and curly brackets (`${VAR}`). So the following lines
+When you run this script, you should see that it prints out the inputs (in reverse order) and nothing else. What is happening is that the `INPUT[i]` is being replaced by the i'th indexed array value. The dollar sign and curly bracket syntax (`${INPUTS[i]}`) are used to tell bash that this is a variable and not a string literal. All variables that you use in your bash should be surrounded by the dollar sign and curly brackets (`${VAR}`). So the following lines
 
 ```
 ./c-echo ${INPUTS[2]}
@@ -124,7 +124,7 @@ done
 
 Make sure to take careful note of the quotes around the inputs array (`"${INPUTS[@]}"`), and lets take a closer look at that line. The line is structured as `for x in y` where `x` is the variable that `y` will be unpacked into. In the case of bash for loops it supports in-line lists, so if you put a single value for `y` it will do a single iteration replaced the variable `x` with `y`. Alternatively you could have put multiple values seperated by spaces in place of the `y` and `x` would iterate over all of them. We've already discussed that we need the dollar sign and curly braces (`${}`) to tell bash that this is a variable and not a literal, but lets look at the index of operator with ampersand (`[@]`). This expands the array inputs into its consituent parts, and without it the for loop would only iterate over the first element in the array. 
 
-The last thing we need to consider is why we need the extra quotes around the `inputs` variable, which has to do with the way shell replaces and parses values. When bash sees the variable symbols (`${}`) it replaces that variable with the value, which in the case of the first iteration would be `first input`. The problem we now have is with the for loop, since this type of loop allows for a list of comma seperated values to be put in-line when the variable is replaced with two different values it will try and iterate over them seperatly and each word in the array will be run seperatly. When we add the quotes the loop then sees these two words as a single entry (which is what we want) and will execute it correctly. These little details can make bash a bit difficult to work with at first, but will become more natrual the more you work with it (and Stack Overflow is your friend).
+The last thing we need to consider is why we need the extra quotes around the `INPUTS` variable, which has to do with the way shell replaces and parses values. When bash sees the variable symbols (`${}`) it replaces that variable with the value, which in the case of the first iteration would be `first input`. The problem we now have is with the for loop, since this type of loop allows for a list of comma seperated values to be put in-line when the variable is replaced with two different values it will try and iterate over them seperatly and each word in the array will be run seperatly. When we add the quotes the loop then sees these two words as a single entry (which is what we want) and will execute it correctly. These little details can make bash a bit difficult to work with at first, but will become more natrual the more you work with it (and Stack Overflow is your friend).
 
 As for the loop itself, it starts with the `for` keyword, but must be followed with a `do` keyword on the next line (or seperated from the `for` line with a semicolon (`;`), which represents a newline. Everything after the `do` keyword makes up the loop body, and will be executed each iteration, until we reach the `done` keyword, which represents the end of the loop body.
 
@@ -216,7 +216,7 @@ int main(int argv, char** argc) {
 }
 ```
 
-Now, re-compile the program (remember to use `g++ c-echo.cpp -o c-echo` so it generates the correct executable) and re-run your `assay.sh` test script. It should now say that all the tests have been passed.
+Now, re-compile the program (remember to use `g++ c-echo.cpp -o c-echo` so it generates the correct executable) and re-run your `array.sh` test script. It should now say that all the tests have been passed.
 
 > Make a commit here with the assay.sh and c-echo.cpp files
 
