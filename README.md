@@ -284,7 +284,7 @@ The function `ADD_EXECUTABLE` tells CMake to create a new exectuable named after
 $ cmake3 .
 ```
 
-This command envokes the cmake build system in the local directory (where our CMakeLists.txt file is located). **Make sure you use the `cmake3` comamnd and not just `cmake`**. Hammer has two version of cmake installed, and if you do not use the `cmake3` command you will get an error. This will then generate a Makefile that matches the executable that we asked for in our CMakeLists.txt. Go ahead and envoke the Makefile and you should see a nicely designed build percentge which will generate a new `c-echo` executable.
+This command envokes the cmake build system in the local directory (where our CMakeLists.txt file is located). **Make sure you use the `cmake3` comamnd and not just `cmake`**. Hammer has two version of cmake installed, and if you do not use the `cmake3` command you will get an error (note that you will likely just use the `cmake` command when you develop on your local environment, since you will only have one version of CMake installed). This will then generate a Makefile that matches the executable that we asked for in our CMakeLists.txt. Go ahead and envoke the Makefile and you should see a nicely designed build percentge which will generate a new `c-echo` executable.
 
 ```
 $ make
