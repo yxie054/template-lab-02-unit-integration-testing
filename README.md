@@ -273,12 +273,14 @@ One of the benefits of writing unit tests is that it forces you to think about h
 Before we can start actually writing the unit tests, there are a few changes we'll need to make to our repository. The first issue is that in order to use gtest is we'll need to change from hand compiling our program to using a build system. Gtest doesn't support the basic make build system, but instead supports [CMake](https://cmake.org/) which is a build system built on top of make and supports some more advanced features. The CMake system looks for a CMakeLists.txt file in order to know what to build, so start by creating the following CMakeLists.txt file:
 
 ```
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
 ADD_EXECUTABLE(c-echo
     main.cpp
 )
 ```
 
-The function `ADD_EXECUTABLE` tells CMake to create a new exectuable named after the first parameter in that function, in this case `c-echo`. We then list all the `.cpp` files which need to be included in that executable. In this case we only have the main.cpp, which has a `#include` for the c-echo.h file which makes sure that the c-echo.h file gets included during compilation (this has to do with the way that C++ compilers stitch some files together during compilation, and won't be further covered in this lab). I mentioned earlier that CMake is built on top of make, and to be more specific what it does is actually generate really good make files. Run the following command from the terminal in order to generate a new make file to compile your program:
+The first function, `CMAKE_MINIMUM_REQUIRED`, sets the minimum version of CMake that can be used to compile this program. The function `ADD_EXECUTABLE` tells CMake to create a new exectuable named after the first parameter in that function, in this case `c-echo`. We then list all the `.cpp` files which need to be included in that executable. In this case we only have the main.cpp, which has a `#include` for the c-echo.h file which makes sure that the c-echo.h file gets included during compilation (this has to do with the way that C++ compilers stitch some files together during compilation, and won't be further covered in this lab). I mentioned earlier that CMake is built on top of make, and to be more specific what it does is actually generate really good make files. Run the following command from the terminal in order to generate a new make file to compile your program:
 
 ```
 $ cmake3 .
@@ -319,6 +321,8 @@ $ git submodule add https://github.com/google/googletest.git
 This will create a new googletest folder which contains all the code from the gtest repository. If you run `git status` you should also see that the googletest folder has already been added for commiting, as well as a hidden .gitmodules file, which has the information for which submodules this repository should contain. Now we need to modify our CMakeLists.txt file so it knows to compile the gtest code along with our own code by adding the following:
 
 ```
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
 ADD_SUBDIRECTORY(googletest)
 
 SET(CMAKE_CXX_STANDARD 11)
