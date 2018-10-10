@@ -281,10 +281,10 @@ ADD_EXECUTABLE(c-echo
 The function `ADD_EXECUTABLE` tells CMake to create a new exectuable named after the first parameter in that function, in this case `c-echo`. We then list all the `.cpp` files which need to be included in that executable. In this case we only have the main.cpp, which has a `#include` for the c-echo.h file which makes sure that the c-echo.h file gets included during compilation (this has to do with the way that C++ compilers stitch some files together during compilation, and won't be further covered in this lab). I mentioned earlier that CMake is built on top of make, and to be more specific what it does is actually generate really good make files. Run the following command from the terminal in order to generate a new make file to compile your program:
 
 ```
-$ cmake .
+$ cmake3 .
 ```
 
-This command envokes the cmake build system in the local directory (where our CMakeLists.txt file is located). This will then generate a Makefile that matches the executable that we asked for in our CMakeLists.txt. Go ahead and envoke the Makefile and you should see a nicely designed build percentge which will generate a new `c-echo` executable.
+This command envokes the cmake build system in the local directory (where our CMakeLists.txt file is located). **Make sure you use the `cmake3` comamnd and not just `cmake`**. Hammer has two version of cmake installed, and if you do not use the `cmake3` command you will get an error. This will then generate a Makefile that matches the executable that we asked for in our CMakeLists.txt. Go ahead and envoke the Makefile and you should see a nicely designed build percentge which will generate a new `c-echo` executable.
 
 ```
 $ make
@@ -321,6 +321,8 @@ This will create a new googletest folder which contains all the code from the gt
 ```
 ADD_SUBDIRECTORY(googletest)
 
+SET(CMAKE_CXX_STANDARD 11)
+
 ADD_EXECUTABLE(c-echo
     main.cpp
 )
@@ -330,9 +332,10 @@ ADD_EXECUTABLE(test
 )
 
 TARGET_LINK_LIBRARIES(test gtest)
+TARGET_COMPILE_DEFINITIONS(test PRIVATE gtest_disable_pthreads=ON)
 ```
 
-These changes do a few things for us. The first is the `ADD_SUBDIRECTORY` function, which makes CMake aware of the gtest framework. It will then look into that directory for another CMakeLists.txt file which will tell it how to compile that code and include it in our own. We also have a new `ADD_EXECUTABLE` line which requires a new test.cpp file. This test.cpp file is where we will write our tests and create a main specificially for running those tests. This new executable will just run the tests and won't run the normal program functionality, so we still need the old executable to be generated. Finally, we add a `TARGET_LINK_LIBRARIES` function, which links our test program to the gtest library, making gtest a dependency for the test executable (note that the name *gtest* is actually defined by the Google Unit Test Framework, not by us).
+These changes do a few things for us. The first is the `ADD_SUBDIRECTORY` function, which makes CMake aware of the gtest framework. It will then look into that directory for another CMakeLists.txt file which will tell it how to compile that code and include it in our own. Next we have a `SET` function, which we use to set the C++ standard that we want to compile against to C++11. This is essentially equivalent to adding a `-std=c++11` flag to your g++ compilation. We also have a new `ADD_EXECUTABLE` line which requires a new test.cpp file. This test.cpp file is where we will write our tests and create a main specificially for running those tests. This new executable will just run the tests and won't run the normal program functionality, so we still need the old executable to be generated. Finally, we add a `TARGET_LINK_LIBRARIES` function, which links our test program to the gtest library, making gtest a dependency for the test executable (note that the name *gtest* is actually defined by the Google Unit Test Framework, not by us). Finally, we have a `TARGET_COMPILE_DEFINITIONS` function, which adds a compilation definition to the build, which in this case disables googletest from looking for the pthreads library which hammer doesn't have. This is equivalent to adding a `-Dgtest_disable_pthreads=ON` flag which is a compiler pre-processor option. If you are doing this lab on you local machine,  you may be able to remove this last line of the CMakeLists.txt file.
 
 ## Writing a Unit Test
 
@@ -361,7 +364,7 @@ After that we create our first unit test. There are lots of different types of t
 Now that we've modified our CMakeLists.txt, we'll need to generate a new Makefile before we can compile the tests. Run the following commands to generate a new Makefile, compile the new targets, and then run the tests:
 
 ```
-$ cmake .
+$ cmake3 .
 $ make
 $ ./test
 ```
