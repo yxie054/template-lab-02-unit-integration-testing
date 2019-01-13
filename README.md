@@ -200,7 +200,7 @@ done
 
 Run the updated test code and the issue should be fairly obvious. Out c-echo program prints a space after every word in `argc`, leading to a traiing whitespace that doesn't exist in the input. Lets go ahead and update the c-echo program so that we skip printing the trailing whitespace.
 
-```shell
+```c++
 #include <iostream>
 
 int main(int argv, char** argc) {
