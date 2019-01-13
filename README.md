@@ -1,8 +1,8 @@
-# Bash and Unit Testing
+# Bash, Integration Testing and Unit Testing
 
 > Author(s): Brian Crites ([@brrcrites](https://github.com/brrcrites)), Rachid Ouit
 
-In this lab you will learn the basics of how to use bash (Bourne Again SHell) scripting to automate common tasks and improve your workflow. Bash is a perfect language when you need to automate a small task on the command line and the cost of building the same script in a higher level lanuage is higher than the task itself. While bash is usually used to automate small tasks, there are lots of systems that are built on top of it or use it as part of their running process. These include many of the UNIX commands  you are familiar with as well as many major build and package management systems.
+In this lab you will learn the basics of how to use bash (Bourne Again SHell) scripting to automate common tasks and improve your workflow, as well as how that can be leveraged to create basic integration tests for CLI (command line interface) programs. Bash is a perfect language when you need to automate a small task on the command line and the cost of building the same script in a higher level lanuage is higher than the task itself. While bash is usually used to automate small tasks, there are lots of systems that are built on top of it or use it as part of their running process. These include many of the UNIX commands  you are familiar with as well as many major build and package management systems.
 
 ## Basic Shell Script
 
@@ -79,7 +79,7 @@ When you run this script, you should see that it prints out the inputs (in rever
 
 ```
 ./c-echo ${INPUTS[2]}
-./c-echo ${INPUTS{1]}
+./c-echo ${INPUTS[1]}
 ./c-echo ${INPUTS[0]}
 ```
 
@@ -98,11 +98,11 @@ Because this will simply execute the code, it is often common to have the system
 
 INPUTS=("first input" "second input" "third input")
 
-echo "Executing ./c-echo third input"
+echo "Executing ./c-echo ${INPUTS[2]}"
 ./c-echo ${INPUTS[2]}
-echo "Executing ./c-echo second input"
-./c-echo ${INPUTS{1]}
-echo "Executing ./c-echo first input"
+echo "Executing ./c-echo ${INPUTS[1]}"
+./c-echo ${INPUTS[1]}
+echo "Executing ./c-echo ${INPUTS[0]}"
 ./c-echo ${INPUTS[0]}
 ```
 
@@ -220,9 +220,9 @@ Now, re-compile the program (remember to use `g++ c-echo.cpp -o c-echo` so it ge
 
 > Make a commit here with the assay.sh and c-echo.cpp files
 
-There are lots of different ways you can generate useful conditions within bash, especially when also using other bash commands. We are only covering the most basic version here, but we encourage you to explore more conditions on your own as the need arises.
+## Bash for Integration/System Testing
 
-There are also additional features that we haven't mentioned here that you may find useful when writing bash scripts such as [command line arguments](http://linuxcommand.org/lc3_wss0120.php), [user input](https://ryanstutorials.net/bash-scripting-tutorial/bash-input.php), and [functions](https://ryanstutorials.net/bash-scripting-tutorial/bash-functions.php)
+When creating a bash script to execute a command line program and check the resulting output we are performing a basic version of integration and system testing. The bash script mimics the way a user would enter commands into the CLI, making it very effective at testing the program interface, and by leveraging conditionals it can report back to us if the resulting output matches what we are expecting. In the example we went through above there is only a single function, so we have essentially written a method for performing integration, system, and unit testing all at the same time because with such as small example they are all essentailly the same. Even if we add more components in the form of classes and functions within the program, bash will only ever execute the program through the `main()` function putting it squarely into the realm of integration and system testing. Using loops and other more advanced bash features such as [command line arguments](http://linuxcommand.org/lc3_wss0120.php), [user input](https://ryanstutorials.net/bash-scripting-tutorial/bash-input.php), and [functions](https://ryanstutorials.net/bash-scripting-tutorial/bash-functions.php) makes it fairly easily to create a basic but reliable and extendable integration testing system for CLI programs.
 
 ## Unit Testing in C++
 
@@ -232,7 +232,7 @@ Testing is a very important part of the software development process that is oft
 
 Because C++ is a compiled language, it is fairly difficult to create unit tests for individual classes and functions because they need a main to perform the test running. Rather than try and invent our own testing paradigms/frameworks, we are going to use the fairly standard [Google Unit Test Framework](https://github.com/google/googletest) (gtest) for C++. While it's tempting to think we are using this because Google told us we needed more testing in the curriculum, it is actually because the author ([@brrcrites](https://github.com/brrcrites)) uses it in his research, and it has become the de-facto standard teseting framework for C++ code.
 
-Since we are going to write unit tests for this program, we first want to break the project up into different modules so its easier to test. Lets modify our c-echo.cpp file, and rename it to c-echo.h. If we rename and then modify c-echo.cpp without telling git that we are going to rename it, then its going to think we removed one file and created an entirely new one. This can make the commits very hard to read (and review very difficult), so we should rename the file using git itself:
+Since we are going to write unit tests for this program, we first want to break the project up into different modules so its easier to test. Note that for this small example we will only be creating a single function as our module for testing, but the principles are the same if you have a single module or hundreds. Lets modify our c-echo.cpp file, and rename it to c-echo.h. If we rename and then modify c-echo.cpp without telling git that we are going to rename it, then its going to think we removed one file and created an entirely new one. This can make the commits very hard to read (and review very difficult), so we should rename the file using git itself:
 
 ```
 $ git mv c-echo.cpp c-echo.h
@@ -318,7 +318,11 @@ We could download the gtest source code and include it in our git repository, bu
 $ git submodule add https://github.com/google/googletest.git
 ```
 
-This will create a new googletest folder which contains all the code from the gtest repository. If you run `git status` you should also see that the googletest folder has already been added for commiting, as well as a hidden .gitmodules file, which has the information for which submodules this repository should contain. Now we need to modify our CMakeLists.txt file so it knows to compile the gtest code along with our own code by adding the following:
+This will create a new googletest folder which contains all the code from the gtest repository. If you run `git status` you should also see that the googletest folder has already been added for commiting, as well as a hidden .gitmodules file, which has the information for which submodules this repository should contain. 
+
+> Note: when we add the googletest repository as a submodule it automatically downloads the source code to our local machine, but adds a link to the repository in GitHub. If you download a project containing a submodule from GitHub (which you will likely do at some point for your assignment) you will need to add a `--recursive` flag to your `git clone` command to pull the submodule along with the repository (`git clone --recursive <github-repo-url>`). If you forget to pull recursively and need to pull the submodule after cloning you can use the command `git submodule update --init --recursive` within the newly clone repository to pull any missing submodules.
+
+Now we need to modify our CMakeLists.txt file so it knows to compile the gtest code along with our own code by adding the following:
 
 ```
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
