@@ -12,7 +12,7 @@ First, you should clone this repository and perform the rest of the lab within t
 
 Were going to start with the basics, creating a hello world bashs script that you can execute on the command line. Start by opening a new `hello.sh` file in your editor of choice and writing the following:
 
-```
+```shell
 #!/bin/sh
 
 echo "hello world"
@@ -49,7 +49,7 @@ Now, try executing the file again using `./hello.sh` and you should see `hell wo
 
 Bash can be very useful for testing, because it can easily automate the execution of command line software with different parameters. For example, lets create a new program named `c-echo.cpp` that prints to standard output whatever is passed to it as a command line argument:
 
-```
+```c++
 #include <iostream>
 
 int main(int argv, char** argc) {
@@ -63,7 +63,7 @@ int main(int argv, char** argc) {
 
 Compile this program as `c-echo` (`g++ c-echo.cpp -o c-echo`) and test it with some different inputs to verify that it prints whatever is passed to it as an input parameter. Now, lets create a program named `array.sh` which can automatically run this program with some known inputs to automate it's testing.
 
-```
+```shell
 #!/bin/sh
 
 INPUTS=("first input" "second input" "third input")
@@ -93,7 +93,7 @@ Are replaced instead with the values from the array, and the following is execut
 
 Because this will simply execute the code, it is often common to have the system echo out what it is going to run before running it. This makes it easier for the user of the script to understand what is going on and what they should expect to be output. Update your script to the following:
 
-```
+```shell
 #!/bin/sh
 
 INPUTS=("first input" "second input" "third input")
@@ -110,7 +110,7 @@ echo "Executing ./c-echo ${INPUTS[0]}"
 
 Obviously if we have a large array, or multiple arrays where we want to iterate to run all combinations, then hand coding the combinations is less than desirable. Luckily bash supports various types of loops including iteration loops. Lets try and replace our hard coded execution lines with a loop instead. Update your array.sh file with the following:
 
-```
+```shell
 #!/bin/sh
 
 INPUTS=("first input" "second input" "third input")
@@ -130,7 +130,7 @@ As for the loop itself, it starts with the `for` keyword, but must be followed w
 
 Loop iterations are not only useful for user defined arrays, but are also useful for iterating over data that bash interprets as array. For instnace, you can easily iterate over a directory of files like you would when you need to process multiple files through a program and didn't want to do it one file at a time. Create a new file, `list.sh`, with the following code:
 
-```
+```shell
 for file in ./*
 do
     echo $(basename "$file")
@@ -145,7 +145,7 @@ Here, the `./*` piece of the for loop returns all the files (using the wildcard 
 
 Loops make it easy for us to iterate over a set of files to bulk process data or to run a number of different inputs through a program, but we'll need conditionals if we want to validate output or run only a subset of files from a directory for process. Lets open our `array.sh` file and update it to make sure that the output of our program matches what we expect.
 
-```
+```shell
 #!/bin/sh
 
 INPUTS=("first input" "second input" "third input")
@@ -178,7 +178,7 @@ Test failed
 
 Looks like our outputs didn't match out inputs, why could that be? Lets take a closer look at the output we get and what we compare it to and see if we can find the issue. Rewrite the `array.sh` script to print both values **surrounded by string literals**.
 
-```
+```shell
 #!/bin/sh
 
 INPUTS=("first input" "second input" "third input")
@@ -200,7 +200,7 @@ done
 
 Run the updated test code and the issue should be fairly obvious. Out c-echo program prints a space after every word in `argc`, leading to a traiing whitespace that doesn't exist in the input. Lets go ahead and update the c-echo program so that we skip printing the trailing whitespace.
 
-```
+```shell
 #include <iostream>
 
 int main(int argv, char** argc) {
@@ -240,7 +240,7 @@ $ git mv c-echo.cpp c-echo.h
 
 If you run `git status` you should see that git has logged the file rename. Now, lets turn c-echo.h into a function rather than just a main:
 
-```
+```c++
 #include <iostream>
 
 std::string echo(int length, char** chars) {
@@ -258,7 +258,7 @@ std::string echo(int length, char** chars) {
 
 Notice that now instead of printing directly, we are generating a string which we will print to standard output in the main. Now, lets create a new main.cpp file so we can run the program like we did before:
 
-```
+```c++
 #include "c-echo.h"
 
 int main(int argv, char** argc) {
@@ -349,7 +349,7 @@ These changes do a few things for us. The first is the `ADD_SUBDIRECTORY` functi
 
 Now, lets create the test.cpp file and create our first unit test:
 
-```
+```c++
 #include "c-echo.h"
 
 #include "gtest/gtest.h"
@@ -431,7 +431,7 @@ The problem is that we expected `hello world` to be returned, but we forgot that
 
 The first test you've written represents the type of average case we would expect from the user, which are important to test. You also want to make sure you are testing edge cases, where the functionality of what you are teseting may not be as obvious. For example, our echo function is designed to mimic exactly what is input so a blank input gets a blank response. Another developer may assume that no input is invalid and return some type of error. Lets create a unit test for an empty input, which tests that is equivalent to returning a blank.
 
-```
+```c++
 TEST(EchoTest, EmptyString) {
     char* test_val[1]; test_val[0] = "./c-echo";
     EXPECT_EQ("", echo(1,test_val));
