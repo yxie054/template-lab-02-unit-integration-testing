@@ -2,7 +2,7 @@
 
 > Author(s): Brian Crites ([@brrcrites](https://github.com/brrcrites)), Rachid Ouit
 
-In this lab you will learn the basics of how to use bash (Bourne Again SHell) scripting to automate common tasks and improve your workflow, as well as how that can be leveraged to create basic integration tests for CLI (command line interface) programs. Bash is a perfect language when you need to automate a small task on the command line and the cost of building the same script in a higher level lanuage is higher than the task itself. While bash is usually used to automate small tasks, there are lots of systems that are built on top of it or use it as part of their running process. These include many of the UNIX commands  you are familiar with as well as many major build and package management systems.
+In this lab you will learn the basics of how to use bash (Bourne Again SHell) scripting to automate common tasks and improve your workflow, as well as how that can be leveraged to create basic integration tests for CLI (command line interface) programs. Bash is a perfect language when you need to automate a small task on the command line and the cost of building the same script in a higher level lanuage is higher than the task itself. While bash is usually used to automate small tasks, there are lots of systems that are built on top of it or use it as part of their running process. These include many of the UNIX commands you are familiar with as well as many major build and package management systems.
 
 ## Basic Shell Script
 
