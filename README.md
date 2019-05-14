@@ -6,7 +6,7 @@ In this lab you will learn the basics of how to use bash (Bourne Again SHell) sc
 
 ## Basic Shell Script
 
-> Note: Bash will be executable on most UNIX and Mac systems, however does not natively work with Windows. The easiest way to do this lab on a Windows machine is either to ssh into the Hammer server and run it there, or to install the Ubuntu Subsystem for Windows, which is avaiable in the app store for Windows 10.
+> Note: Bash will be executable on most UNIX and Mac systems, however does not natively work with Windows. The easiest way to do this lab on a Windows machine is either to ssh into the Hammer server and run it there, or to install the Ubuntu Subsystem for Windows, which is available in the app store for Windows 10.
 
 First, you should clone this repository and perform the rest of the lab within that clone. This lab will point out good places to commit your changes as an example, however future labs will not have these hints. The TA will grade your last commit to this repository before the deadline.
 
