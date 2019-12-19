@@ -47,6 +47,7 @@ Now, try executing the file again using `./hello.sh` and you should see `hello w
 
 ## Bash Arrays and Loops
 
+Bash scripting is an effective way to automate linux tasks that you would otherwise have to by hand like setting up a computer environment with the proper tools and package or performing routing maintenance like rotating logs. In this exercise we are going to look at how to use Bash arrays and loops to help us automate the testing of a program that takes command line arguments. In order to automate testing we first have to have a program we want to test. Start by creating the below C++ program which is designed to echo all the command line inputs (minus the program name itself).
 
 ```c++
 #include <iostream>
@@ -60,7 +61,7 @@ int main(int argv, char** argc) {
 }
 ```
 
-Compile this program as `c-echo` (`g++ c-echo.cpp -o c-echo`) and test it with some different inputs to verify that it prints whatever is passed to it as an input parameter. Now, let's create a program named `array.sh` which can automatically run this program with some known inputs to automate it's testing.
+Compile this program as `c-echo` (`g++ c-echo.cpp -o c-echo`) and test it with some different inputs to verify that it prints whatever is passed to it as command line input. Now, let's create a program named `array.sh` which can automatically run this program with some known inputs to automate it's testing.
 
 ```shell
 #!/bin/sh
@@ -175,7 +176,7 @@ Test failed
 Test failed
 ```
 
-Looks like our outputs didn't match out inputs, why could that be? Let's take a closer look at the output we get and what we compare it to and see if we can find the issue. Rewrite the `array.sh` script to print both values **surrounded by string literals**.
+Looks like our outputs didn't match out inputs, why could that be? Let's take a closer look at the output we get and what we compare it to when they don't match and see if we can find the issue. Rewrite the `array.sh` script to print both values **surrounded by string literals**.
 
 ```shell
 #!/bin/sh
@@ -186,18 +187,18 @@ for input in "${INPUTS[@]}"
 do
     echo "./c-echo ${input}"
     output=$(./c-echo ${input})
-    echo "Output: \"${output}\""
-    echo "Input: \"${input}\""
     if [ "${output}" = "${input}" ]
     then
         echo "Test passed"
     else
         echo "Test failed"
+        echo "Expected: \"${input}\""
+        echo "Received: \"${output}\""
     fi
 done
 ```
 
-Run the updated test code and the issue should be fairly obvious. Out c-echo program prints a space after every word in `argc`, leading to a trailing whitespace that doesn't exist in the input. Let's go ahead and update the c-echo program so that we skip printing the trailing whitespace.
+Run the updated test code and the issue should be fairly obvious. Our c-echo program prints a space after every word in `argc`, leading to a trailing whitespace that doesn't exist in the input. At this point we would need to evaluate both the program and our tests and decide which is correct (since testing against incorrect test cases doesn't actually help us). In this case lets assume that we don't want the trailing space to print and let's update the c-echo program so that we skip printing the trailing whitespace.
 
 ```c++
 #include <iostream>
