@@ -256,7 +256,7 @@ std::string echo(int length, char** chars) {
 }
 ```
 
-Notice that now instead of printing directly, we are generating a string which we will print to standard output in the main. Now, let's create a new main.cpp file so we can run the program like we did before:
+Notice that now instead of printing directly, we are generating a string which we will print to standard output in the main. The code has been slightly modified to allow it to return a string, for example it adds a `\n` character to the end rather than the `std::endl` it used before, but the functionality is the same. Now, let's create a new main.cpp file so we can run the program like we did before:
 
 ```c++
 #include "c-echo.h"
@@ -266,7 +266,7 @@ int main(int argv, char** argc) {
 }
 ```
 
-One of the benefits of writing unit tests is that it forces you to think about how to subdivide a problem across a number of different classes and functions, because those become your testable units. 
+One of the benefits of writing unit tests is that it forces you to think about how to subdivide a problem across a number of different classes and functions, because those become your testable units. The main itself cannot be unit tested since a different main will be needed to compile the unit tests. This is why in most large programming projects the only thing the main does is call a different function or create an object and call a method on that object.
 
 ## CMake
 
@@ -410,7 +410,7 @@ Expected equality of these values:
     Which is: "hello world\n"
 ```
 
-The problem is that we expected `hello world` to be returned, but we forgot that the function actually adds a newline to the end of the string so the prompt will go to the next line. At this point we have two options (1) if we actually want the function to return `hello world`, we need to modify the function or (2) if the function should actually return a newline then we need to change the test. In a test driven design methodology, we would actually write one or a small number of basic unit tests, then develop a small part of our system until we pass those unit tests, and then repeat that process until we've finish our function (and then we already have our unit tests). Here, the function echo should probably directly mimic the input so we don't actually want that newline in the function but instead in the main. Go ahead and modify the function in c-echo.h so it no longer returns the newline and instead add that newline to the main.cpp, and re-run the test to make sure you are now passing (since the tests don't run the other main, the added newline there won't be a problem for testing), you should see something like this:
+The problem is that we expected `hello world` to be returned, but we forgot that the function actually adds a newline to the end of the string so the prompt will go to the next line. At this point we have two options (1) if we actually want the function to return `hello world`, we need to modify the function or (2) if the function should actually return a newline then we need to change the test. In a test driven design methodology, we would actually write one or a small number of basic unit tests, then develop a small part of our system until we pass those unit tests, and then repeat that process until we've finish our function (and then we already have our unit tests). Here, the function echo should probably directly mimic the input so we don't actually want that newline in the function but instead in the main. Go ahead and modify the function in c-echo.h so it no longer returns the newline and instead add that newline to the main.cpp (this way we still get easy to read output without it affecting our function). Re-run the test to make sure you are now passing (since the tests don't run the other main, the added newline there won't be a problem for testing), you should see something like this:
 
 ```
 [==========] Running 1 test from 1 test case.
