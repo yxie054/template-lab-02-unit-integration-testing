@@ -282,7 +282,7 @@ ADD_EXECUTABLE(c-echo
 
 Now, run `cmake3 .` followed by `make` to build the executable.
 
-Since that we've switched the build system, go ahead and run a few test commands on the new executable and re-run your array.sh file to make sure its still functioning as we expected. Since we made what could be a major breaking change to the program, its a good idea to make sure we test the changes to make sure its still working as expected before we make any new changes. We should also update our .gitignore file to ignore the generated build files:
+Now that we've switched the build system, go ahead and run a few test commands on the new executable and re-run your `array.sh` file to make sure its still functioning as we expected. Since we made what could be a major breaking change to the program, its a good idea to make sure we test the changes to verify it's still working as expected before we make any new changes. We should also update our `.gitignore` file to ignore the generated build files:
 
 ```
 CMakeCache.txt
