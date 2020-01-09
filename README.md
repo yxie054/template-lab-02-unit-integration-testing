@@ -270,7 +270,7 @@ One of the benefits of writing unit tests is that it forces you to think about h
 
 ## CMake
 
-Before we can start actually writing the unit tests, there are a few changes we'll need to make to our repository. The first issue is that in order to use gtest is we'll need to change from hand compiling our program to using a build system. Gtest doesn't support the basic make build system, but instead supports [CMake](https://cmake.org/) which is a build system built on top of make and supports some more advanced features. The CMake system looks for a CMakeLists.txt file in order to know what to build, so start by creating the following CMakeLists.txt file:
+Before we can start actually writing the unit tests, there are a few changes we'll need to make to our repository. The first issue is that in order to use gtest is we'll need to change from hand compiling our program to using a build system. Gtest doesn't support the basic make build system, but instead supports CMake. As with the last lab, start by creating the following CMakeLists.txt file:
 
 ```
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
@@ -280,22 +280,9 @@ ADD_EXECUTABLE(c-echo
 )
 ```
 
-The first function, `CMAKE_MINIMUM_REQUIRED`, sets the minimum version of CMake that can be used to compile this program. The function `ADD_EXECUTABLE` tells CMake to create a new exectuable named after the first parameter in that function, in this case `c-echo`. We then list all the `.cpp` files which need to be included in that executable. In this case we only have the main.cpp, which has a `#include` for the c-echo.h file which makes sure that the c-echo.h file gets included during compilation (this has to do with the way that C++ compilers stitch some files together during compilation, and won't be further covered in this lab). I mentioned earlier that CMake is built on top of make, and to be more specific what it does is actually generate really good make files. Run the following command from the terminal in order to generate a new make file to compile your program:
+Now, run `cmake3 .` followed by `make` to build the executable.
 
-```
-$ cmake3 .
-```
-
-This command envokes the cmake build system in the local directory (where our CMakeLists.txt file is located). **Make sure you use the `cmake3` comamnd and not just `cmake`**. Hammer has two version of cmake installed, and if you do not use the `cmake3` command you will get an error (note that you will likely just use the `cmake` command when you develop on your local environment, since you will only have one version of CMake installed). This will then generate a Makefile that matches the executable that we asked for in our CMakeLists.txt. Go ahead and envoke the Makefile and you should see a nicely designed build percentage which will generate a new `c-echo` executable.
-
-```
-$ make
-[ 50%] Building CXX object CMakeFiles/c-echo.dir/main.cpp.o
-[100%] Linking CXX executable c-echo
-[100%] Built target c-echo
-```
-
-Now that we've switched the build system, go ahead and run a few test commands on the new executable and re-run your array.sh file to make sure its still functioning as we expected. Since we made what could be a major breaking change to the program, its a good idea to make sure we test the changes to make sure its still working as expected before we make any new changes. We should also update our .gitignore file to ignore the generated build files:
+Now that we've switched the build system, go ahead and run a few test commands on the new executable and re-run your `array.sh` file to make sure its still functioning as we expected. Since we made what could be a major breaking change to the program, its a good idea to make sure we test the changes to verify it's still working as expected before we make any new changes. We should also update our `.gitignore` file to ignore the generated build files:
 
 ```
 CMakeCache.txt
