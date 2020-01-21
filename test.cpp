@@ -12,6 +12,16 @@ TEST(EchoTest, YinjieXie) {
     EXPECT_EQ("Yinjie Xie", echo(3,test_val));
 }
 
+TEST(EchoTest, ID) {
+    char* test_val[2]; test_val[0] = "./c-echo"; test_val[1] = "862140304";
+    EXPECT_EQ("862140304", echo(2,test_val));
+}
+
+TEST(EchoTest, Address) {
+    char* test_val[2]; test_val[0] = "./c-echo"; test_val[1] = "Riverside";
+    EXPECT_EQ("Riverside", echo(2,test_val));
+}
+
 
 TEST(EchoTest, EmptyString) {
     char* test_val[1]; test_val[0] = "./c-echo";
@@ -22,4 +32,5 @@ TEST(EchoTest, EmptyString) {
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
+
 }
